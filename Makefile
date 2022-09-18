@@ -1,27 +1,21 @@
 NAME=sudoku_solver
-OUTDIR=output
-SRCDIR=src
+OUTPUT_DIR=output
 CPPFLAGS= -std=c++14 -Wall -Wpedantic -Werror 
 DEBUGFLAGS?=
-CPP=g++
 
 default: run
 
-.PHONY: clean
+.PHONY: clean run build setup
 
-board.o: ${SRCDIR}/board.cpp ${SRCDIR}/board.hpp
-	${CPP} -o ${OUTDIR}/board.o ${CPPFLAGS} -c ${SRCDIR}/board.cpp ${DEBUGFLAGS}
+setup:
+	@meson setup ${OUTPUT_DIR}
 
-main.o: ${SRCDIR}/main.cpp
-	${CPP} -o ${OUTDIR}/main.o ${CPPFLAGS} -c ${SRCDIR}/main.cpp ${DEBUGFLAGS}
+build:
+	@meson compile -C ${OUTPUT_DIR}
 
-${NAME}: main.o board.o
-	${CPP} -o ${OUTDIR}/${NAME} ${CPPFLAGS} ${OUTDIR}/main.o ${OUTDIR}/board.o ${DEBUGFLAGS}
-
-run: ${NAME}
-	@echo
-	@${OUTDIR}/${NAME}
+run: build
+	@${OUTPUT_DIR}/${NAME}
 
 clean:
-	@rm -f ${OUTDIR}/*.o
-	@rm -f ${OUTDIR}/${NAME}
+	@ninja clean -C ${OUTPUT_DIR}
+
